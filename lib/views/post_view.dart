@@ -38,93 +38,359 @@ class _PostViewState extends State<PostView> {
                   ),
                 ),
                 width: MediaQuery.of(context).size.width,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Image.asset(
-                        "assets/package-truck.png",
-                        height: 180,
-                        width: 180,
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Text(
-                      "Add your package details",
-                      style: AppTextStyles.heading.copyWith(),
-                    ),
-                    SizedBox(height: 10.0),
-                    Text(
-                      "Pick Up",
-                      style: AppTextStyles.body.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.onSurface,
-                      ),
-                    ),
-                    SizedBox(height: 5.0),
-                    Container(
-                      padding: EdgeInsets.only(left: 10),
-                      margin: EdgeInsets.only(right: 20),
-                      decoration: BoxDecoration(
-                        color: AppColors.form,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Enter pick up location",
-                          border: InputBorder.none,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Image.asset(
+                          "assets/package-truck.png",
+                          height: 180,
+                          width: 180,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Text(
-                      "Drop Off",
-                      style: AppTextStyles.body.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.onSurface,
+                      SizedBox(height: 20.0),
+                      Text(
+                        "Add your package details",
+                        style: AppTextStyles.heading,
                       ),
-                    ),
-                    SizedBox(height: 5.0),
-                    Container(
-                      padding: EdgeInsets.only(left: 10),
-                      margin: EdgeInsets.only(right: 20),
-                      decoration: BoxDecoration(
-                        color: AppColors.form,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Enter drop off  location",
-                          border: InputBorder.none,
+                      SizedBox(height: 10.0),
+                      Text(
+                        "Pick Up",
+                        style: AppTextStyles.body.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.onSurface,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Center(
-                      child: Container(
-                        height: 50,
-                        width: MediaQuery.of(context).size.width / 1.9,
+                      SizedBox(height: 5.0),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        margin: EdgeInsets.only(right: 20),
                         decoration: BoxDecoration(
-                          color: AppColors.primary,
+                          color: AppColors.form,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Center(
-                          child: Text(
-                            "Submit Location",
-                            style: AppTextStyles.button.copyWith(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.onPrimary,
+
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: "Enter pick up location",
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                      Text(
+                        "Drop Off",
+                        style: AppTextStyles.body.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.onSurface,
+                        ),
+                      ),
+                      SizedBox(height: 5.0),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        margin: EdgeInsets.only(right: 20),
+                        decoration: BoxDecoration(
+                          color: AppColors.form,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: "Enter drop off  location",
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      Center(
+                        child: Container(
+                          height: 50,
+                          width: MediaQuery.of(context).size.width / 1.9,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Submit Location",
+                              style: AppTextStyles.button.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.onPrimary,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 50.0),
+                      Container(
+                        margin: EdgeInsets.only(right: 20),
+                        padding: EdgeInsets.all(20.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.onSurface,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Pick up Information",
+                              style: AppTextStyles.subHeading,
+                            ),
+                            SizedBox(height: 10.0),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  color: AppColors.primary,
+                                  size: 30.0,
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Enter Pick up Address",
+                                      hintStyle: AppTextStyles.body.copyWith(
+                                        fontSize: 16,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.onSecondary
+                                              .withAlpha(10),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10.0),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: AppColors.primary,
+                                  size: 30.0,
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your full name",
+                                      hintStyle: AppTextStyles.body.copyWith(
+                                        fontSize: 16,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.onSecondary
+                                              .withAlpha(10),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10.0),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.phone,
+                                  color: AppColors.primary,
+                                  size: 30.0,
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your phone",
+                                      hintStyle: AppTextStyles.body.copyWith(
+                                        fontSize: 16,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.onSecondary
+                                              .withAlpha(10),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 50.0),
+                      Container(
+                        margin: EdgeInsets.only(right: 20),
+                        padding: EdgeInsets.all(20.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.onSurface,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Drop off details",
+                              style: AppTextStyles.subHeading,
+                            ),
+                            SizedBox(height: 10.0),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  color: AppColors.primary,
+                                  size: 30.0,
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Enter drop off Address",
+                                      hintStyle: AppTextStyles.body.copyWith(
+                                        fontSize: 16,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.onSecondary
+                                              .withAlpha(10),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10.0),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: AppColors.primary,
+                                  size: 30.0,
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your full name",
+                                      hintStyle: AppTextStyles.body.copyWith(
+                                        fontSize: 16,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.onSecondary
+                                              .withAlpha(10),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10.0),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.phone,
+                                  color: AppColors.primary,
+                                  size: 30.0,
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your phone",
+                                      hintStyle: AppTextStyles.body.copyWith(
+                                        fontSize: 16,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.onSecondary
+                                              .withAlpha(10),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 30),
+
+                      Container(
+                        padding: EdgeInsets.only(
+                          left: 30,
+                          right: 10,
+                          top: 10,
+                          bottom: 10.0,
+                        ),
+                        margin: EdgeInsets.only(right: 20.0),
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.onSurface,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  "Total Price",
+                                  style: AppTextStyles.body.copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "\$80",
+                                  style: AppTextStyles.subHeading.copyWith(
+                                    fontSize: 25,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 50),
+                            Container(
+                              margin: EdgeInsets.only(left: 10),
+                              height: 60,
+                              width: 200,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+
+                              child: Center(
+                                child: Text(
+                                  "Place Order",
+                                  style: AppTextStyles.button.copyWith(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 80),
+                    ],
+                  ),
                 ),
               ),
             ),
