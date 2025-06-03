@@ -6,7 +6,9 @@ class AppColors {
   static const Color secondary = Color(0xFFE040FB);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color error = Color(0xFFD32F2F);
+  static const Color nav = Color(0xFF000080);
   static const Color onPrimary = Color(0xFFFFFFFF);
+  static const Color navbackground = Color(0xFFF3C623);
   static const Color onSecondary = Color(0xFF212121);
   static const Color onSurface = Color(0xFF212121);
   static const Color form = Color.fromARGB(34, 121, 91, 203);
