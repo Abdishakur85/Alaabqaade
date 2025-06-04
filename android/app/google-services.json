@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "538409114335",
+    "project_id": "alaabqaadeapp",
+    "storage_bucket": "alaabqaadeapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:538409114335:android:296a5b223a4dc1bc46a76a",
+        "android_client_info": {
+          "package_name": "com.example.alaabqaade"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPLRk4maahdnXk2T4yil-c41ANbawtjdM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

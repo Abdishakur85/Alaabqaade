@@ -2,7 +2,7 @@ import 'package:alaabqaade/constants/theme_data.dart';
 import 'package:flutter/material.dart';
 
 class Order extends StatelessWidget {
-  const Order({Key? key}) : super(key: key);
+  const Order({super.key});
 
   @override
   Widget build(BuildContext context) {

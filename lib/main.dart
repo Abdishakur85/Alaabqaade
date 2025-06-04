@@ -1,5 +1,6 @@
 // import 'package:alaabqaade/views/onboarding_view.dart';
-import 'package:alaabqaade/views/bottomnav.dart';
+import 'package:alaabqaade/auth/login_view.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:alaabqaade/constants/theme_data.dart';
@@ -8,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   final press = await SharedPreferences.getInstance();
   final onboarding = press.getBool("Onboarding") ?? true;
   runApp(MyApp(onboarding: onboarding));
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       //  home: onboarding ? OnboardingView() : PostView(),
-      home: BottomNav(),
+      home: LogIn(),
     );
   }
 }
