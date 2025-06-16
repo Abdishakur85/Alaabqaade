@@ -1,9 +1,8 @@
 import 'package:alaabqaade/constants/theme_data.dart';
 import 'package:alaabqaade/data/onboarding_items.dart';
-import 'package:alaabqaade/home.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:alaabqaade/views/bottomnav.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:flutter/material.dart';
 
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});
@@ -15,14 +14,36 @@ class OnboardingView extends StatefulWidget {
 class _OnboardingViewState extends State<OnboardingView> {
   final controller = OnboardingItems();
   final pageController = PageController();
-  bool isListPage = false;
+  bool isLastPage = false;
+  bool _imagesPreloaded = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // ✅ Safe context access for precaching
+    if (!_imagesPreloaded) {
+      for (var item in controller.items) {
+        precacheImage(AssetImage(item.image), context);
+      }
+      _imagesPreloaded = true;
+    }
+  }
+
+  void _completeOnboarding() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => BottomNav()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomSheet: Container(
         margin: const EdgeInsets.all(15),
-        child: isListPage
-            ? getStarted(context)
+        child: isLastPage
+            ? getStarted(context, _completeOnboarding)
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -31,8 +52,8 @@ class _OnboardingViewState extends State<OnboardingView> {
                     onPressed: () {
                       pageController.animateToPage(
                         controller.items.length - 1,
-                        duration: Duration(milliseconds: 200),
-                        curve: Curves.easeIn,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
                       );
                     },
                     child: Text(
@@ -42,14 +63,15 @@ class _OnboardingViewState extends State<OnboardingView> {
                       ),
                     ),
                   ),
-                  // INDICATOR
+
+                  // PAGE INDICATOR
                   SmoothPageIndicator(
                     controller: pageController,
                     count: controller.items.length,
                     onDotClicked: (index) => pageController.animateToPage(
                       index,
-                      duration: Duration(milliseconds: 200),
-                      curve: Curves.easeIn,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
                     ),
                     effect: const ExpandingDotsEffect(
                       dotColor: Colors.grey,
@@ -60,11 +82,11 @@ class _OnboardingViewState extends State<OnboardingView> {
                     ),
                   ),
 
-                  // NEXT BOTTON
+                  // NEXT BUTTON
                   TextButton(
                     onPressed: () => pageController.nextPage(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeIn,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
                     ),
                     child: Text(
                       "Next",
@@ -79,26 +101,33 @@ class _OnboardingViewState extends State<OnboardingView> {
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
         child: PageView.builder(
+          controller: pageController,
+          itemCount: controller.items.length,
           onPageChanged: (index) {
             setState(() {
-              isListPage = index == controller.items.length - 1;
+              isLastPage = index == controller.items.length - 1;
             });
           },
-          itemCount: controller.items.length,
-          controller: pageController,
           itemBuilder: (context, index) => Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(controller.items[index].image, fit: BoxFit.cover),
+              Image.asset(
+                controller.items[index].image,
+                fit: BoxFit.cover,
+                cacheHeight: 300,
+              ),
+              const SizedBox(height: 30),
               Text(
                 controller.items[index].title,
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 controller.items[index].description,
                 textAlign: TextAlign.center,
-
                 style: AppTextStyles.description,
               ),
             ],
@@ -109,7 +138,7 @@ class _OnboardingViewState extends State<OnboardingView> {
   }
 }
 
-Widget getStarted(BuildContext context) {
+Widget getStarted(BuildContext context, VoidCallback onPressed) {
   return Container(
     margin: const EdgeInsets.only(bottom: 20.0),
     decoration: BoxDecoration(
@@ -121,16 +150,7 @@ Widget getStarted(BuildContext context) {
     child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextButton(
-        onPressed: () async {
-          final prefr = await SharedPreferences.getInstance();
-          await prefr.setBool("Welcome To Home page", true);
-          if (!context.mounted) return;
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => Home()),
-          );
-        },
-
+        onPressed: onPressed,
         child: Text('Get Started', style: AppTextStyles.button),
       ),
     ),

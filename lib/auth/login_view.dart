@@ -1,5 +1,6 @@
 import 'package:alaabqaade/auth/signup_view.dart';
 import 'package:alaabqaade/constants/theme_data.dart';
+import 'package:alaabqaade/views/bottomnav.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -8,10 +9,10 @@ class LogIn extends StatefulWidget {
   const LogIn({super.key});
 
   @override
-  State<LogIn> createState() => _LogInState();
+  State<LogIn> createState() => LogInState();
 }
 
-class _LogInState extends State<LogIn> {
+class LogInState extends State<LogIn> {
   String? email, password;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -21,20 +22,18 @@ class _LogInState extends State<LogIn> {
         email: email!,
         password: password!,
       );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => BottomNav()),
+      );
     } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-
-      // Handle the error, e.g., show a snackbar or print the error
-      if (e.code == "User not found") {
+      if (e.code == "user-not-found") {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: AppColors.error,
             content: Text(
-              'User not found. Please check your email.',
-              style: AppTextStyles.body.copyWith(
-                color: AppColors.error,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              "No user found for that email.",
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             duration: const Duration(seconds: 2),
           ),
@@ -42,27 +41,10 @@ class _LogInState extends State<LogIn> {
       } else if (e.code == "User not found. please check your email.") {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: AppColors.error,
             content: Text(
-              'User not found. Please check your email.',
-              style: AppTextStyles.body.copyWith(
-                color: AppColors.error,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.message ?? 'An error occurred. Please try again.',
-              style: AppTextStyles.body.copyWith(
-                color: AppColors.error,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              "Wrong password provided for that user.",
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             duration: const Duration(seconds: 2),
           ),
@@ -74,26 +56,26 @@ class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.nav,
       body: Container(
+        margin: EdgeInsets.only(top: 200),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              "assets/trackup.png",
-              height: 300,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+            SizedBox(height: 30),
             Padding(
-              padding: EdgeInsets.only(left: 40, right: 40),
-              child: TextFormField(
+              padding: const EdgeInsets.only(left: 40, right: 40),
+              child: TextField(
                 controller: emailController,
                 decoration: InputDecoration(
                   hintText: "Email",
-                  hintStyle: AppTextStyles.body.copyWith(
-                    color: AppColors.onSecondary,
-                    fontSize: 24,
+                  hintStyle: TextStyle(
+                    color: AppColors.onSurface,
+                    fontSize: 23.0,
+                  ),
+
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
                   ),
                 ),
               ),
@@ -101,14 +83,20 @@ class _LogInState extends State<LogIn> {
             SizedBox(height: 40),
             Padding(
               padding: EdgeInsets.only(left: 40, right: 40),
+
               child: TextFormField(
                 controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Password",
                   hintStyle: AppTextStyles.body.copyWith(
-                    color: AppColors.onSecondary,
+                    color: AppColors.onSurface,
                     fontSize: 23,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+
+                    borderSide: BorderSide(),
                   ),
                 ),
               ),
@@ -116,13 +104,13 @@ class _LogInState extends State<LogIn> {
 
             SizedBox(height: 20),
             Padding(
-              padding: EdgeInsets.only(right: 40),
+              padding: EdgeInsets.only(left: 200),
               child: Row(
                 children: [
                   Text(
                     "Forget Password?",
                     style: AppTextStyles.body.copyWith(
-                      color: AppColors.onSecondary,
+                      color: AppColors.surface,
                       fontWeight: FontWeight.w500,
                       fontSize: 20,
                     ),
@@ -139,14 +127,14 @@ class _LogInState extends State<LogIn> {
                   Text(
                     'Sign in',
                     style: AppTextStyles.body.copyWith(
-                      color: AppColors.onSurface,
+                      color: AppColors.surface,
                       fontSize: 30,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   GestureDetector(
                     onTap: () {
-                      if (passwordController != "" &&
+                      if (passwordController.text != "" &&
                           emailController.text != "") {
                         setState(() {
                           email = emailController.text.trim();
@@ -181,7 +169,7 @@ class _LogInState extends State<LogIn> {
                         child: Icon(
                           Icons.arrow_forward_ios_outlined,
                           color: AppColors.nav,
-                          size: 40.0,
+                          size: 60.0,
                         ),
                       ),
                     ),
@@ -196,7 +184,7 @@ class _LogInState extends State<LogIn> {
                 Text(
                   "Don't have an account? ",
                   style: AppTextStyles.body.copyWith(
-                    color: AppColors.onSecondary,
+                    color: AppColors.surface,
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),

@@ -6,7 +6,7 @@ class OnboardingItems {
       title: "Track Your Packages",
       description:
           "Easily monitor the status of your deliveries in real time.Get instant updates from pickup to doorstep.Never lose sight of your package again.",
-      image: 'assets/direction.png',
+      image: 'assets/notebookbox.png',
     ),
     OnboardingInfo(
       title: "Real-Time Delivery Updates",
