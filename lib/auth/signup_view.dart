@@ -1,14 +1,15 @@
 import 'package:alaabqaade/auth/login_view.dart';
-import 'package:alaabqaade/auth/signup_view.dart';
+
 import 'package:alaabqaade/constants/theme_data.dart';
 import 'package:alaabqaade/models/database.dart';
 import 'package:alaabqaade/models/shared_pref.dart';
 import 'package:alaabqaade/views/bottomnav.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
+
 import 'package:random_string/random_string.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});

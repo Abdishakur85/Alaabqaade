@@ -1,4 +1,5 @@
 // import 'package:alaabqaade/views/onboarding_view.dart';
+
 import 'package:alaabqaade/auth/login_view.dart';
 import 'package:alaabqaade/views/post_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       //  home: onboarding ? OnboardingView() : PostView(),
-      home: PostView(),
+      home: LogIn(),
     );
   }
 }

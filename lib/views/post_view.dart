@@ -1,5 +1,10 @@
+import 'package:alaabqaade/constants/razorapi.dart';
 import 'package:alaabqaade/constants/theme_data.dart';
+import 'package:alaabqaade/models/database.dart';
+import 'package:alaabqaade/models/shared_pref.dart';
 import 'package:flutter/material.dart';
+import 'package:random_string/random_string.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PostView extends StatefulWidget {
   const PostView({super.key});
@@ -9,6 +14,102 @@ class PostView extends StatefulWidget {
 }
 
 class _PostViewState extends State<PostView> {
+  final TextEditingController pickupAddress = TextEditingController();
+  final TextEditingController pickupusername = TextEditingController();
+  final TextEditingController pickupnumber = TextEditingController();
+  final TextEditingController dropoffaddress = TextEditingController();
+  final TextEditingController dropoffusername = TextEditingController();
+  final TextEditingController dropoffnumber = TextEditingController();
+  String? email, id;
+
+  gettheSharedPref() async {
+    email = await SharedPref().getUserEmail();
+    id = await SharedPref().getUserId();
+    setState(() {});
+  }
+
+  ontheload() async {
+    await gettheSharedPref();
+    setState(() {});
+  }
+
+  late Razorpay _razorpay;
+  int total = 0;
+
+  @override
+  void dispose() {
+    _razorpay.clear(); // clear the razorpay instances
+    super.dispose();
+  }
+
+  // ✅ Razorpay: USD version
+  void openCheckout(String amount, String email) {
+    int amountInCents = (double.parse(amount) * 100)
+        .toInt(); // Convert dollars to cents
+    var options = {
+      'key': RazorpayKey,
+      'amount': amountInCents.toString(), // amount in cents (smallest unit)
+      'currency': 'USD', // ✅ use USD
+      'name': 'Alaab Qaade',
+      'description': 'Pay \$$amount for package delivery',
+      'prefill': {'email': email},
+      'external': {
+        'wallet': ['paytm'],
+      },
+      'theme': {'color': "#007BFF"},
+    };
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint('Error$e');
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    String tracknumber = randomAlphaNumeric(10);
+    String orderId = randomAlphaNumeric(10);
+    Map<String, dynamic> userOrderMap = {
+      "PickUpaddress": pickupAddress.text,
+      "PickUpUsername": pickupusername.text,
+      "pickUpNumber": pickupnumber.text,
+      "DropeOffAddress": dropoffaddress.text,
+      "DropeOffUsername": dropoffusername.text,
+      "DropeOffNumber": dropoffnumber.text,
+      "OrderId": orderId,
+      "Track": tracknumber,
+    };
+    await DatabaseMethodes().addUserOrder(userOrderMap, id!, orderId);
+    await DatabaseMethodes().addAdminOrder(userOrderMap, orderId);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green,
+        content: Text("Order Placed Successfully", style: AppTextStyles.body),
+      ),
+    );
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Payment failure: ${response.message}")),
+    );
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("External Wallet: ${response.walletName}")),
+    );
+  }
+
+  @override
+  void initState() {
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    ontheload();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,6 +180,7 @@ class _PostViewState extends State<PostView> {
                                 SizedBox(width: 10),
                                 Expanded(
                                   child: TextField(
+                                    controller: pickupAddress,
                                     decoration: InputDecoration(
                                       hintText: "Enter Pick up Address",
                                       hintStyle: AppTextStyles.body.copyWith(
@@ -106,6 +208,7 @@ class _PostViewState extends State<PostView> {
                                 SizedBox(width: 10),
                                 Expanded(
                                   child: TextField(
+                                    controller: pickupusername,
                                     decoration: InputDecoration(
                                       hintText: "Enter your full name",
                                       hintStyle: AppTextStyles.body.copyWith(
@@ -133,6 +236,7 @@ class _PostViewState extends State<PostView> {
                                 SizedBox(width: 10),
                                 Expanded(
                                   child: TextField(
+                                    controller: pickupnumber,
                                     decoration: InputDecoration(
                                       hintText: "Enter your phone",
                                       hintStyle: AppTextStyles.body.copyWith(
@@ -181,6 +285,7 @@ class _PostViewState extends State<PostView> {
                                 SizedBox(width: 10),
                                 Expanded(
                                   child: TextField(
+                                    controller: dropoffaddress,
                                     decoration: InputDecoration(
                                       hintText: "Enter drop off Address",
                                       hintStyle: AppTextStyles.body.copyWith(
@@ -208,6 +313,7 @@ class _PostViewState extends State<PostView> {
                                 SizedBox(width: 10),
                                 Expanded(
                                   child: TextField(
+                                    controller: dropoffusername,
                                     decoration: InputDecoration(
                                       hintText: "Enter your full name",
                                       hintStyle: AppTextStyles.body.copyWith(
@@ -235,6 +341,7 @@ class _PostViewState extends State<PostView> {
                                 SizedBox(width: 10),
                                 Expanded(
                                   child: TextField(
+                                    controller: dropoffnumber,
                                     decoration: InputDecoration(
                                       hintText: "Enter your phone",
                                       hintStyle: AppTextStyles.body.copyWith(
@@ -292,20 +399,39 @@ class _PostViewState extends State<PostView> {
                               ],
                             ),
                             SizedBox(height: 50),
-                            Container(
-                              margin: EdgeInsets.only(left: 10),
-                              height: 60,
-                              width: 200,
-                              decoration: BoxDecoration(
-                                color: AppColors.primary,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
+                            GestureDetector(
+                              onTap: () {
+                                if (pickupAddress.text != "" &&
+                                    pickupusername.text != "" &&
+                                    pickupnumber.text != "") {
+                                  openCheckout("800000", email!);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text(
+                                        "Compulited all form fildies",
+                                        style: AppTextStyles.body,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(left: 10),
+                                height: 60,
+                                width: 200,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
 
-                              child: Center(
-                                child: Text(
-                                  "Place Order",
-                                  style: AppTextStyles.button.copyWith(
-                                    fontSize: 20,
+                                child: Center(
+                                  child: Text(
+                                    "Place Order",
+                                    style: AppTextStyles.button.copyWith(
+                                      fontSize: 20,
+                                    ),
                                   ),
                                 ),
                               ),
