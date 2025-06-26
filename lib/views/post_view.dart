@@ -47,7 +47,7 @@ class _PostViewState extends State<PostView> {
     int amountInCents = (double.parse(amount) * 100)
         .toInt(); // Convert dollars to cents
     var options = {
-      'key': RazorpayKey,
+      'key': razorpayKey,
       'amount': amountInCents.toString(), // amount in cents (smallest unit)
       'currency': 'USD', // ✅ use USD
       'name': 'Alaab Qaade',
@@ -113,7 +113,7 @@ class _PostViewState extends State<PostView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: AppColors.secondary,
       body: Container(
         margin: EdgeInsets.only(top: 60),
         child: Column(
@@ -145,7 +145,7 @@ class _PostViewState extends State<PostView> {
                     children: [
                       Center(
                         child: Image.asset(
-                          "assets/package-truck.png",
+                          "assets/notebook.png",
                           height: 180,
                           width: 180,
                         ),
@@ -391,7 +391,7 @@ class _PostViewState extends State<PostView> {
                                   ),
                                 ),
                                 Text(
-                                  "\$80",
+                                  "\$55",
                                   style: AppTextStyles.subHeading.copyWith(
                                     fontSize: 25,
                                   ),
@@ -404,7 +404,7 @@ class _PostViewState extends State<PostView> {
                                 if (pickupAddress.text != "" &&
                                     pickupusername.text != "" &&
                                     pickupnumber.text != "") {
-                                  openCheckout("800000", email!);
+                                  openCheckout("550", email!);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(

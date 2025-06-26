@@ -3,11 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
   static const Color primary = Color(0xFF4A0CBD);
-  static const Color secondary = Color(0xFFE040FB);
+  static const Color secondary = Color(0xFF003049);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color error = Color(0xFFD32F2F);
   static const Color nav = Color(0xFF000080);
   static const Color onPrimary = Color(0xFFFFFFFF);
+  static const Color onePrimary = Color(0xFF023E8A);
+
   static const Color navbackground = Color(0xFFF3C623);
   static const Color onSecondary = Color(0xFF212121);
   static const Color onSurface = Color(0xFF212121);
@@ -18,7 +20,7 @@ class AppTextStyles {
   static TextStyle heading = GoogleFonts.jost(
     fontSize: 24,
     fontWeight: FontWeight.bold,
-    color: AppColors.onSurface,
+    color: AppColors.onPrimary,
   );
 
   static TextStyle subHeading = GoogleFonts.jost(

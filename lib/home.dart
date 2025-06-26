@@ -59,7 +59,7 @@ class Home extends StatelessWidget {
                 margin: EdgeInsets.only(left: 20.0, right: 20),
                 height: MediaQuery.of(context).size.height / 2.2,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: AppColors.onePrimary,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),

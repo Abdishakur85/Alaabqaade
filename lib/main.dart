@@ -1,7 +1,7 @@
 // import 'package:alaabqaade/views/onboarding_view.dart';
 
-import 'package:alaabqaade/auth/login_view.dart';
-import 'package:alaabqaade/views/post_view.dart';
+import 'package:alaabqaade/views/order_view.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       //  home: onboarding ? OnboardingView() : PostView(),
-      home: LogIn(),
+      home: Order(),
     );
   }
 }

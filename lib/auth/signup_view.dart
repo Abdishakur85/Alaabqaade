@@ -90,7 +90,7 @@ class SignUpState extends State<SignUp> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset("assets/login.png"),
+            Image.asset("assets/notebook.png"),
             SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40),

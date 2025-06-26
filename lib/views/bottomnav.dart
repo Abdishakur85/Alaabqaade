@@ -37,7 +37,7 @@ class _BottomNavState extends State<BottomNav> {
       bottomNavigationBar: CurvedNavigationBar(
         height: 70,
         backgroundColor: AppColors.navbackground,
-        color: AppColors.nav,
+        color: AppColors.secondary,
         animationDuration: const Duration(milliseconds: 600),
         onTap: (int index) {
           setState(() {

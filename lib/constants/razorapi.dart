@@ -1,1 +1,1 @@
-String RazorpayKey = "rzp_test_sg_paVsdGHCHoW0dN";
+String razorpayKey = "rzp_test_sg_paVsdGHCHoW0dN";
