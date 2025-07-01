@@ -23,4 +23,18 @@ class OnboardingItems {
       image: 'assets/box.png',
     ),
   ];
+  String _getStatusText(int index) {
+    switch (index) {
+      case 0:
+        return "Order Placed";
+      case 1:
+        return "Preparing";
+      case 2:
+        return "On the way";
+      case 3:
+        return "Delivered";
+      default:
+        return "";
+    }
+  }
 }

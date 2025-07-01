@@ -16,9 +16,10 @@ android {
         targetSdkVersion 35
         versionCode 1
         versionName "1.0"
-    
     }
+
     compileOptions {
+        // Set Java compatibility to avoid deprecation warnings
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
@@ -28,8 +29,17 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            // For development builds
             signingConfig signingConfigs.debug
+        }
+
+        release {
+            // Replace with your own keystore setup for production builds
+            signingConfig signingConfigs.debug // ⚠️ Use real keystore for production
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

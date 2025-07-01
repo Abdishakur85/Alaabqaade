@@ -1,5 +1,7 @@
 import 'package:alaabqaade/constants/theme_data.dart';
+
 import 'package:flutter/material.dart';
+import 'package:timelines_plus/timelines_plus.dart';
 
 class Order extends StatefulWidget {
   const Order({super.key});
@@ -11,6 +13,7 @@ class Order extends StatefulWidget {
 class _OrderState extends State<Order> {
   bool curretOrder = true;
   bool pastOrder = false;
+  int currentStep = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,8 +185,9 @@ class _OrderState extends State<Order> {
                       ],
                     ),
                     SizedBox(height: 30),
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width,
+
                       child: Column(
                         children: [
                           Row(
@@ -204,6 +208,68 @@ class _OrderState extends State<Order> {
                               ),
                             ],
                           ),
+                          const Divider(),
+
+                          Row(
+                            children: [
+                              Image.asset(
+                                "assets/box2.png",
+                                height: 150,
+                                width: 150,
+                                fit: BoxFit.cover,
+                              ),
+                              Expanded(
+                                child: FixedTimeline.tileBuilder(
+                                  builder: TimelineTileBuilder.connected(
+                                    contentsAlign: ContentsAlign.alternating,
+                                    connectionDirection:
+                                        ConnectionDirection.before,
+                                    itemCount: 4,
+
+                                    contentsBuilder: (context, index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 60.0,
+                                        ),
+                                        child: Text(
+                                          _getStatusText(index),
+                                          style: AppTextStyles.body.copyWith(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      );
+                                    },
+                                    indicatorBuilder: (_, index) {
+                                      if (index <= currentStep) {
+                                        return DotIndicator(
+                                          color: AppColors.primary,
+                                          child: Icon(
+                                            Icons.check,
+                                            color: AppColors.surface,
+                                            size: 24.0,
+                                          ),
+                                        );
+                                      } else {
+                                        return OutlinedDotIndicator(
+                                          borderWidth: 3.0,
+                                          size: 25.0,
+                                        );
+                                      }
+                                    },
+                                    connectorBuilder: (_, index, ___) =>
+                                        SolidLineConnector(
+                                          color: index < currentStep
+                                              ? AppColors.onSecondary
+                                              : AppColors.nav,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
                         ],
                       ),
                     ),
@@ -215,5 +281,20 @@ class _OrderState extends State<Order> {
         ),
       ),
     );
+  }
+
+  String _getStatusText(int index) {
+    switch (index) {
+      case 0:
+        return "Order Placed";
+      case 1:
+        return "Preparing";
+      case 2:
+        return "On the way";
+      case 3:
+        return "Delivered";
+      default:
+        return "";
+    }
   }
 }
