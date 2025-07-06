@@ -77,6 +77,7 @@ class _PostViewState extends State<PostView> {
       "DropeOffNumber": dropoffnumber.text,
       "OrderId": orderId,
       "Track": tracknumber,
+      "Tracker": -1,
     };
     await DatabaseMethodes().addUserOrder(userOrderMap, id!, orderId);
     await DatabaseMethodes().addAdminOrder(userOrderMap, orderId);

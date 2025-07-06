@@ -286,11 +286,11 @@ class _OrderState extends State<Order> {
   String _getStatusText(int index) {
     switch (index) {
       case 0:
-        return "Order Placed";
+        return "Order Placed ";
       case 1:
-        return "Preparing";
+        return "Preparing Order";
       case 2:
-        return "On the way";
+        return "On the way to drop-off";
       case 3:
         return "Delivered";
       default:

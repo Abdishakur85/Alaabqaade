@@ -27,4 +27,15 @@ class DatabaseMethodes {
         .doc(id)
         .set(userInfoMap);
   }
+
+  // it reads all the orders from the database
+  Future<Stream<QuerySnapshot>> getAdminOrders() async {
+    return await FirebaseFirestore.instance.collection("Order").snapshots();
+  }
+
+  Future updateAdminTracker(String id, int updatedtracker) async {
+    return await FirebaseFirestore.instance.collection("Order").doc(id).update({
+      "Tracker": updatedtracker,
+    });
+  }
 }
