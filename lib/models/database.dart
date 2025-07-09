@@ -38,4 +38,26 @@ class DatabaseMethodes {
       "Tracker": updatedtracker,
     });
   }
+
+  Future updateUserTracker(
+    String id,
+    int updatedtracker,
+    String orderid,
+  ) async {
+    return await FirebaseFirestore.instance
+        .collection("user")
+        .doc(id)
+        .collection("Order")
+        .doc(orderid)
+        .update({"Tracker": updatedtracker});
+  }
+
+  // get users orders
+  Future<Stream<QuerySnapshot>> getUserOrder(String id) async {
+    return await FirebaseFirestore.instance
+        .collection("user")
+        .doc(id)
+        .collection("Order")
+        .snapshots();
+  }
 }

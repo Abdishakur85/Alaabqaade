@@ -19,7 +19,7 @@ android {
     }
 
     compileOptions {
-        // Set Java compatibility to avoid deprecation warnings
+        // Java 17 support (no deprecation warnings)
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
@@ -28,15 +28,31 @@ android {
         jvmTarget = "17"
     }
 
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        // Uncomment and configure for Play Store builds
+        /*
+        release {
+            storeFile file("your-keystore.jks")
+            storePassword "your-password"
+            keyAlias "your-alias"
+            keyPassword "your-key-password"
+        }
+        */
+    }
+
     buildTypes {
         debug {
-            // For development builds
             signingConfig signingConfigs.debug
         }
-
         release {
-            // Replace with your own keystore setup for production builds
-            signingConfig signingConfigs.debug // ⚠️ Use real keystore for production
+            // ⚠️ For production, replace with signingConfigs.release
+            signingConfig signingConfigs.debug
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

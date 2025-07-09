@@ -1,4 +1,7 @@
 import 'package:alaabqaade/constants/theme_data.dart';
+import 'package:alaabqaade/models/database.dart';
+import 'package:alaabqaade/models/shared_pref.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:timelines_plus/timelines_plus.dart';
@@ -11,9 +14,142 @@ class Order extends StatefulWidget {
 }
 
 class _OrderState extends State<Order> {
+  String? id;
   bool curretOrder = true;
   bool pastOrder = false;
   int currentStep = 0;
+  getontheload() async {
+    id = await SharedPref().getUserId();
+    OrderStream = await DatabaseMethodes().getUserOrder(id!);
+    setState(() {});
+    print(id);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getontheload();
+  }
+
+  Stream? OrderStream;
+  Widget allOrder() {
+    return StreamBuilder(
+      stream: OrderStream,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot ds = snapshot.data.docs[index];
+                  currentStep = ds["Tracker"];
+
+                  return Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: Material(
+                      elevation: 3.0,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  color: AppColors.onePrimary,
+                                  size: 30,
+                                ),
+                                SizedBox(width: 10.0),
+                                Text(
+                                  ds["DropeOffAddress"],
+                                  style: AppTextStyles.body.copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Divider(),
+                            Row(
+                              children: [
+                                Image.asset(
+                                  "assets/box2.png",
+                                  height: 120,
+                                  width: 120,
+                                  fit: BoxFit.cover,
+                                ),
+                                Expanded(
+                                  child: FixedTimeline.tileBuilder(
+                                    builder: TimelineTileBuilder.connected(
+                                      contentsAlign: ContentsAlign.alternating,
+                                      connectionDirection:
+                                          ConnectionDirection.before,
+                                      itemCount: 4,
+
+                                      contentsBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 40.0,
+                                          ),
+                                          child: Text(
+                                            _getStatusText(index),
+                                            style: AppTextStyles.body.copyWith(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        );
+                                      },
+                                      indicatorBuilder: (_, index) {
+                                        if (index <= currentStep) {
+                                          return DotIndicator(
+                                            color: AppColors.primary,
+                                            child: Icon(
+                                              Icons.check,
+                                              color: AppColors.surface,
+                                              size: 24.0,
+                                            ),
+                                          );
+                                        } else {
+                                          return OutlinedDotIndicator(
+                                            borderWidth: 3.0,
+                                            size: 25.0,
+                                          );
+                                        }
+                                      },
+                                      connectorBuilder: (_, index, ___) =>
+                                          SolidLineConnector(
+                                            color: index < currentStep
+                                                ? AppColors.onSecondary
+                                                : AppColors.nav,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20.0),
+                            Container(child: allOrder()),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Container();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,94 +321,11 @@ class _OrderState extends State<Order> {
                       ],
                     ),
                     SizedBox(height: 30),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                color: AppColors.primary,
-                                size: 30,
-                              ),
-                              SizedBox(width: 10.0),
-                              Text(
-                                'Sodonka opposite Java cofee',
-                                style: AppTextStyles.body.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(),
-
-                          Row(
-                            children: [
-                              Image.asset(
-                                "assets/box2.png",
-                                height: 150,
-                                width: 150,
-                                fit: BoxFit.cover,
-                              ),
-                              Expanded(
-                                child: FixedTimeline.tileBuilder(
-                                  builder: TimelineTileBuilder.connected(
-                                    contentsAlign: ContentsAlign.alternating,
-                                    connectionDirection:
-                                        ConnectionDirection.before,
-                                    itemCount: 4,
-
-                                    contentsBuilder: (context, index) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 60.0,
-                                        ),
-                                        child: Text(
-                                          _getStatusText(index),
-                                          style: AppTextStyles.body.copyWith(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      );
-                                    },
-                                    indicatorBuilder: (_, index) {
-                                      if (index <= currentStep) {
-                                        return DotIndicator(
-                                          color: AppColors.primary,
-                                          child: Icon(
-                                            Icons.check,
-                                            color: AppColors.surface,
-                                            size: 24.0,
-                                          ),
-                                        );
-                                      } else {
-                                        return OutlinedDotIndicator(
-                                          borderWidth: 3.0,
-                                          size: 25.0,
-                                        );
-                                      }
-                                    },
-                                    connectorBuilder: (_, index, ___) =>
-                                        SolidLineConnector(
-                                          color: index < currentStep
-                                              ? AppColors.onSecondary
-                                              : AppColors.nav,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                        ],
-                      ),
+                    Container(
+                      height: MediaQuery.of(context).size.height / 2.3,
+                      child: allOrder(),
                     ),
+                    SizedBox(height: 20.0),
                   ],
                 ),
               ),
@@ -292,7 +345,7 @@ class _OrderState extends State<Order> {
       case 2:
         return "On the way to drop-off";
       case 3:
-        return "Delivered";
+        return " Parcel delivered";
       default:
         return "";
     }
