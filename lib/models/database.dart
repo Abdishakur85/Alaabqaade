@@ -52,12 +52,22 @@ class DatabaseMethodes {
         .update({"Tracker": updatedtracker});
   }
 
-  // get users orders
+  // get users orders(in the current)
   Future<Stream<QuerySnapshot>> getUserOrder(String id) async {
     return await FirebaseFirestore.instance
         .collection("user")
         .doc(id)
         .collection("Order")
+        .snapshots();
+  }
+
+  // get user pastorders
+  Future<Stream<QuerySnapshot>> getUserPastOrders(String id) async {
+    return await FirebaseFirestore.instance
+        .collection("user")
+        .doc(id)
+        .collection("Order")
+        .where("Tracker", isEqualTo: 3)
         .snapshots();
   }
 }

@@ -2,7 +2,6 @@ import 'package:alaabqaade/constants/theme_data.dart';
 import 'package:alaabqaade/models/database.dart';
 import 'package:alaabqaade/models/shared_pref.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 
@@ -18,6 +17,8 @@ class _OrderState extends State<Order> {
   bool curretOrder = true;
   bool pastOrder = false;
   int currentStep = 0;
+  Stream? OrderStream;
+
   getontheload() async {
     id = await SharedPref().getUserId();
     OrderStream = await DatabaseMethodes().getUserOrder(id!);
@@ -31,7 +32,6 @@ class _OrderState extends State<Order> {
     getontheload();
   }
 
-  Stream? OrderStream;
   Widget allOrder() {
     return StreamBuilder(
       stream: OrderStream,
@@ -45,7 +45,7 @@ class _OrderState extends State<Order> {
                   currentStep = ds["Tracker"];
 
                   return Container(
-                    margin: EdgeInsets.only(right: 10.0),
+                    margin: EdgeInsets.only(left: 10, right: 25),
                     child: Material(
                       elevation: 3.0,
                       borderRadius: BorderRadius.circular(20),
@@ -92,7 +92,6 @@ class _OrderState extends State<Order> {
                                       connectionDirection:
                                           ConnectionDirection.before,
                                       itemCount: 4,
-
                                       contentsBuilder: (context, index) {
                                         return Padding(
                                           padding: const EdgeInsets.only(
@@ -136,8 +135,9 @@ class _OrderState extends State<Order> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 20.0),
-                            Container(child: allOrder()),
+                            SizedBox(height: 25.0),
+
+                            // ❌ Removed: Container(child: allOrder()),
                           ],
                         ),
                       ),
@@ -154,7 +154,6 @@ class _OrderState extends State<Order> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.secondary,
-
       body: Container(
         margin: EdgeInsets.only(top: 50),
         child: Column(
@@ -214,9 +213,11 @@ class _OrderState extends State<Order> {
                                 ),
                               )
                             : GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   curretOrder = true;
                                   pastOrder = false;
+                                  OrderStream = await DatabaseMethodes()
+                                      .getUserOrder(id!);
                                   setState(() {});
                                 },
                                 child: Container(
@@ -284,9 +285,11 @@ class _OrderState extends State<Order> {
                                 ),
                               )
                             : GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   pastOrder = true;
                                   curretOrder = false;
+                                  OrderStream = await DatabaseMethodes()
+                                      .getUserPastOrders(id!);
                                   setState(() {});
                                 },
                                 child: Container(
