@@ -1,8 +1,11 @@
 // ... [IMPORTS REMAIN UNCHANGED]
 import 'package:alaabqaade/constants/theme_data.dart';
+import 'package:alaabqaade/models/shared_pref.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 
 class Home extends StatefulWidget {
@@ -19,31 +22,128 @@ class _HomeState extends State<Home> {
   int? matchedTrackerId;
   TextEditingController searchcontroller = new TextEditingController();
   String currentAddress = "Fetching Location";
+  Position? currentPosition;
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
+    ontheload();
+  }
 
+  // A Future function that returns a String (nullable), used to get a matching field from Firestore
   Future<String?> getMatchingField(String userTrackerId) async {
     try {
+      // Fetch the entire 'user' collection from Firestore
       var userCollection = await FirebaseFirestore.instance
           .collection('user')
           .get();
 
+      // Loop through each document (user) in the collection
       for (var userDoc in userCollection.docs) {
+        // For each user, access their 'Order' subcollection
+        // and search for an order where the 'Track' field matches the given tracker ID
         var ordersSnapshot = await userDoc.reference
             .collection('Order')
-            .where('Track', isEqualTo: userTrackerId.trim())
+            .where(
+              'Track',
+              isEqualTo: userTrackerId.trim(),
+            ) // remove extra spaces
             .get();
 
+        // Check if any matching orders were found
         if (ordersSnapshot.docs.isNotEmpty) {
+          // Get the data of the first matching order document
           var data = ordersSnapshot.docs.first.data();
+
+          // Save the drop-off address to the matchedAddress variable (if available)
           matchedAddress = data['DropeOffAddress'] ?? 'No Address Found';
+
+          // Save the tracker ID to the matchedTrackerId variable
           matchedTrackerId = data['Tracker'];
+
+          // Return the string 'Track' to indicate a match was found
           return 'Track';
         }
       }
+
+      // If no matching tracker ID is found, return null
       return null;
     } catch (e) {
+      // Print any error that occurs during the process
       print("Error: $e");
-      return null;
+      return null; // Return null if an error occurs
     }
+  }
+
+  Future<void> getLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        currentAddress = "Location services are disabled";
+      });
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        setState(() {
+          currentAddress = "Location permissions are denied";
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      setState(() {
+        currentAddress = "Location permissions are permanently denied";
+      });
+      return;
+    }
+
+    // If permissions are granted, get the position
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      currentPosition = position;
+    });
+
+    _getAddressFromLatLng(position); // ✅ Separated for clarity
+  }
+
+  Future<void> _getAddressFromLatLng(Position position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      Placemark place =
+          placemarks.first; // ✅ Changed from [0] to .first (safer)
+
+      setState(() {
+        currentAddress = // ✅ Cleaned up formatting
+            "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+      });
+    } catch (e) {
+      setState(() {
+        currentAddress = "Unable to get address";
+      });
+    }
+  }
+
+  Future<void> getthesharedpref() async {
+    id = await SharedPref().getUserId();
+    setState(() {});
+  }
+
+  Future<void> ontheload() async {
+    await getthesharedpref();
   }
 
   @override
@@ -59,38 +159,41 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(width: MediaQuery.of(context).size.width / 4.6),
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: AppColors.primary,
-                            size: 35,
-                          ),
-                          Text(
-                            "Current Location",
-                            style: AppTextStyles.subHeading.apply(
-                              color: Colors.black45,
+                  Container(
+                    margin: EdgeInsets.only(right: 80.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              color: AppColors.primary,
+                              size: 35,
+                            ),
+                            Text(
+                              "Current Location",
+                              style: AppTextStyles.subHeading.apply(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 2.0,
+                          child: Text(
+                            currentAddress,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextStyles.body.copyWith(
+                              color: Colors.black,
                             ),
                           ),
-                        ],
-                      ),
-                      Text(
-                        "Garowe,Nugaal,Somalia",
-                        style: AppTextStyles.subHeading,
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  Image.asset(
-                    "assets/avator.png",
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
+
               SizedBox(height: 20.0),
               Container(
                 width: MediaQuery.of(context).size.width,
@@ -134,6 +237,9 @@ class _HomeState extends State<Home> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: TextField(
+                        enableInteractiveSelection: true, // allows copy & paste
+                        keyboardType: TextInputType.text,
+
                         controller: searchcontroller,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -159,7 +265,16 @@ class _HomeState extends State<Home> {
                                 });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text("Tracking number not found."),
+                                    backgroundColor: AppColors.error,
+                                    content: Text(
+                                      "Tracking number not found.",
+                                      textAlign: TextAlign.center,
+                                      style: AppTextStyles.description.copyWith(
+                                        fontSize: 25.0,
+                                        color: AppColors.surface,
+                                        fontWeight: FontWeight.w100,
+                                      ),
+                                    ),
                                   ),
                                 );
                               }

@@ -1,8 +1,12 @@
 // import 'package:alaabqaade/views/onboarding_view.dart';
 
+import 'package:alaabqaade/admin/admin_login.dart';
 import 'package:alaabqaade/admin/orders_admin.dart';
+import 'package:alaabqaade/auth/login_view.dart';
 import 'package:alaabqaade/auth/signup_view.dart';
 import 'package:alaabqaade/views/bottomnav.dart';
+import 'package:alaabqaade/views/onboarding_view.dart';
+import 'package:alaabqaade/views/profile_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
@@ -26,9 +30,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       //  home: onboarding ? OnboardingView() : PostView(),
-      home: BottomNav(),
+      // home: BottomNav(),
       // home: OrdersAdmin(),
-      // home: SignUp(),
+      // home: OnboardingView(),
+      // home: LogIn(),
+      // home: Profile(),
+      home: AdminLogin(),
     );
   }
 }
