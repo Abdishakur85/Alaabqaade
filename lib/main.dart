@@ -1,6 +1,8 @@
 // import 'package:alaabqaade/views/onboarding_view.dart';
 
 import 'package:alaabqaade/admin/admin_login.dart';
+import 'package:alaabqaade/admin/home_admin.dart';
+import 'package:alaabqaade/admin/manage_users.dart';
 import 'package:alaabqaade/admin/orders_admin.dart';
 import 'package:alaabqaade/auth/login_view.dart';
 import 'package:alaabqaade/auth/signup_view.dart';
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
       // home: OnboardingView(),
       // home: LogIn(),
       // home: Profile(),
-      home: AdminLogin(),
+      home: HomeAdmin(),
     );
   }
 }
