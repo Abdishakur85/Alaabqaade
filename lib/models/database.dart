@@ -61,6 +61,10 @@ class DatabaseMethodes {
         .snapshots();
   }
 
+  Future<Stream<QuerySnapshot>> getAllUsers() async {
+    return await FirebaseFirestore.instance.collection("user").snapshots();
+  }
+
   // get user pastorders
   Future<Stream<QuerySnapshot>> getUserPastOrders(String id) async {
     return await FirebaseFirestore.instance
@@ -69,5 +73,9 @@ class DatabaseMethodes {
         .collection("Order")
         .where("Tracker", isEqualTo: 3)
         .snapshots();
+  }
+
+  Future deleteUser(String id) async {
+    return await FirebaseFirestore.instance.collection("user").doc(id).delete();
   }
 }

@@ -552,7 +552,39 @@ class _OrdersAdminState extends State<OrdersAdmin> {
         margin: EdgeInsets.only(top: 50),
         child: Column(
           children: [
-            Center(child: Text("All Orders", style: AppTextStyles.heading)),
+            Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: AppColors.secondary,
+                        size: 30.0,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: MediaQuery.of(context).size.width / 8),
+                  Center(
+                    child: Text(
+                      "Manage Orders",
+
+                      style: AppTextStyles.heading.copyWith(fontSize: 30),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: 20),
             Expanded(
               child: Container(

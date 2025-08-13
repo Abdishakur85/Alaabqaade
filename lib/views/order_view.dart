@@ -17,7 +17,6 @@ class _OrderState extends State<Order> {
   bool curretOrder = true;
   bool pastOrder = false;
   int currentStep = 0;
-  Stream? OrderStream;
 
   getontheload() async {
     id = await SharedPref().getUserId();
@@ -31,6 +30,8 @@ class _OrderState extends State<Order> {
     super.initState();
     getontheload();
   }
+
+  Stream? OrderStream;
 
   Widget allOrder() {
     return StreamBuilder(
