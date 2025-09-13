@@ -36,8 +36,8 @@ class _BottomNavState extends State<BottomNav> {
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
         height: 70,
-        backgroundColor: AppColors.navbackground,
-        color: AppColors.secondary,
+        backgroundColor: AppColors.surface,
+        color: const Color.fromARGB(255, 79, 60, 184),
         animationDuration: const Duration(milliseconds: 600),
         onTap: (int index) {
           setState(() {
@@ -45,10 +45,10 @@ class _BottomNavState extends State<BottomNav> {
           });
         },
         items: [
-          Icon(Icons.home, color: AppColors.navbackground, size: 34),
-          Icon(Icons.post_add, color: AppColors.navbackground, size: 34),
-          Icon(Icons.shopping_bag, color: AppColors.navbackground, size: 34),
-          Icon(Icons.person, color: AppColors.navbackground, size: 34),
+          Icon(Icons.home, color: AppColors.surface, size: 34),
+          Icon(Icons.post_add, color: AppColors.surface, size: 34),
+          Icon(Icons.shopping_bag, color: AppColors.surface, size: 34),
+          Icon(Icons.person, color: AppColors.surface, size: 34),
         ],
       ),
       body: views[currentIndex],

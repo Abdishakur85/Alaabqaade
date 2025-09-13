@@ -1,9 +1,7 @@
-// ... [IMPORTS REMAIN UNCHANGED]
 import 'package:alaabqaade/constants/theme_data.dart';
 import 'package:alaabqaade/models/shared_pref.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:timelines_plus/timelines_plus.dart';
@@ -69,8 +67,8 @@ class _HomeState extends State<Home> {
       // If no matching tracker ID is found, return null
       return null;
     } catch (e) {
-      // Print any error that occurs during the process
-      print("Error: $e");
+      // Log any error that occurs during the process
+      debugPrint("Error: $e");
       return null; // Return null if an error occurs
     }
   }
@@ -80,9 +78,11 @@ class _HomeState extends State<Home> {
     LocationPermission permission;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      setState(() {
-        currentAddress = "Location services are disabled";
-      });
+      if (mounted) {
+        setState(() {
+          currentAddress = "Location services are disabled";
+        });
+      }
       return;
     }
 
@@ -90,28 +90,34 @@ class _HomeState extends State<Home> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        setState(() {
-          currentAddress = "Location permissions are denied";
-        });
+        if (mounted) {
+          setState(() {
+            currentAddress = "Location permissions are denied";
+          });
+        }
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      setState(() {
-        currentAddress = "Location permissions are permanently denied";
-      });
+      if (mounted) {
+        setState(() {
+          currentAddress = "Location permissions are permanently denied";
+        });
+      }
       return;
     }
 
     // If permissions are granted, get the position
     Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
+      locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
     );
 
-    setState(() {
-      currentPosition = position;
-    });
+    if (mounted) {
+      setState(() {
+        currentPosition = position;
+      });
+    }
 
     _getAddressFromLatLng(position); // ✅ Separated for clarity
   }
@@ -126,20 +132,26 @@ class _HomeState extends State<Home> {
       Placemark place =
           placemarks.first; // ✅ Changed from [0] to .first (safer)
 
-      setState(() {
-        currentAddress = // ✅ Cleaned up formatting
-            "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
-      });
+      if (mounted) {
+        setState(() {
+          currentAddress = // ✅ Cleaned up formatting
+              "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+        });
+      }
     } catch (e) {
-      setState(() {
-        currentAddress = "Unable to get address";
-      });
+      if (mounted) {
+        setState(() {
+          currentAddress = "Unable to get address";
+        });
+      }
     }
   }
 
   Future<void> getthesharedpref() async {
     id = await SharedPref().getUserId();
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> ontheload() async {
@@ -147,430 +159,531 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  void dispose() {
+    searchcontroller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Container(
-          margin: EdgeInsets.only(top: 50),
           child: Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(width: MediaQuery.of(context).size.width / 4.6),
-                  Container(
-                    margin: EdgeInsets.only(right: 80.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: AppColors.primary,
-                              size: 35,
-                            ),
-                            Text(
-                              "Current Location",
-                              style: AppTextStyles.subHeading.apply(
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 2.0,
-                          child: Text(
-                            currentAddress,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.body.copyWith(
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 20.0),
+              // Modern Header with Gradient Background
               Container(
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(left: 20.0, right: 20),
-                height: MediaQuery.of(context).size.height / 2.2,
                 decoration: BoxDecoration(
-                  color: AppColors.onePrimary,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                    bottomLeft: Radius.circular(60),
-                    bottomRight: Radius.circular(60),
+                  gradient: LinearGradient(
+                    colors: [AppColors.primary, AppColors.onePrimary],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
-                child: Column(
-                  children: [
-                    SizedBox(height: 20.0),
-                    Text(
-                      "Track your Shipments",
-                      style: AppTextStyles.heading.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 5.0),
-                    Text(
-                      "Please enter your tracking number to get started",
-                      style: AppTextStyles.description.copyWith(
-                        color: Colors.white70,
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 5.0,
-                        horizontal: 10.0,
-                      ),
-                      height: 50,
-                      margin: EdgeInsets.only(left: 20.0, right: 20),
-                      decoration: BoxDecoration(
-                        color: AppColors.onPrimary,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: TextField(
-                        enableInteractiveSelection: true, // allows copy & paste
-                        keyboardType: TextInputType.text,
-
-                        controller: searchcontroller,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Enter your tracking number",
-                          prefixIcon: Icon(
-                            Icons.track_changes_outlined,
-                            color: AppColors.primary,
-                          ),
-                          suffixIcon: GestureDetector(
-                            onTap: () async {
-                              String? result = await getMatchingField(
-                                searchcontroller.text,
-                              );
-                              if (result != null &&
-                                  matchedAddress != null &&
-                                  matchedTrackerId != null) {
-                                setState(() {
-                                  search = true;
-                                });
-                              } else {
-                                setState(() {
-                                  search = false;
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.error,
-                                    content: Text(
-                                      "Tracking number not found.",
-                                      textAlign: TextAlign.center,
-                                      style: AppTextStyles.description.copyWith(
-                                        fontSize: 25.0,
-                                        color: AppColors.surface,
-                                        fontWeight: FontWeight.w100,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                              print(matchedAddress);
-                              print(matchedTrackerId);
-                            },
-                            child: Icon(Icons.search),
-                          ),
-                        ),
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.onSecondary,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    Spacer(),
-                    Image.asset("assets/only.png", height: 255),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20.0),
-              search
-                  ? Container(
-                      margin: EdgeInsets.only(left: 10, right: 25.0),
-                      child: Material(
-                        elevation: 3.0,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
+                child: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Location Section with Modern Card
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: AppColors.surface,
+                            color: Colors.white.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 20,
+                                offset: Offset(0, 10),
+                              ),
+                            ],
                           ),
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(height: 10.0),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: AppColors.onePrimary,
-                                    size: 30,
+                                  Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Icon(
+                                      Icons.location_on_rounded,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
                                   ),
-                                  SizedBox(width: 10.0),
+                                  SizedBox(width: 12),
                                   Text(
-                                    matchedAddress ?? "No address",
-                                    style: AppTextStyles.body.copyWith(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
+                                    "Current Location",
+                                    style: AppTextStyles.subHeading.copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ],
                               ),
-                              Divider(),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    "assets/box2.png",
-                                    height: 120,
-                                    width: 120,
-                                    fit: BoxFit.cover,
+                              SizedBox(height: 12),
+                              Container(
+                                width: double.infinity,
+                                child: Text(
+                                  currentAddress,
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.body.copyWith(
+                                    fontSize: 14,
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.4,
                                   ),
-                                  Expanded(
-                                    child: FixedTimeline.tileBuilder(
-                                      builder: TimelineTileBuilder.connected(
-                                        contentsAlign:
-                                            ContentsAlign.alternating,
-                                        connectionDirection:
-                                            ConnectionDirection.before,
-                                        itemCount: 4,
-                                        contentsBuilder: (context, index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 40.0,
-                                            ),
-                                            child: Text(
-                                              _getStatusText(index),
-                                              style: AppTextStyles.body
-                                                  .copyWith(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          );
-                                        },
-                                        indicatorBuilder: (_, index) {
-                                          if (index <=
-                                              (matchedTrackerId ?? -1)) {
-                                            return DotIndicator(
-                                              color: AppColors.primary,
-                                              child: Icon(
-                                                Icons.check,
-                                                color: AppColors.surface,
-                                                size: 24.0,
-                                              ),
-                                            );
-                                          } else {
-                                            return OutlinedDotIndicator(
-                                              borderWidth: 3.0,
-                                              size: 25.0,
-                                            );
-                                          }
-                                        },
-                                        connectorBuilder: (_, index, ___) =>
-                                            SolidLineConnector(
-                                              color:
-                                                  index <
-                                                      (matchedTrackerId ?? 0)
-                                                  ? AppColors.onSecondary
-                                                  : AppColors.nav,
-                                            ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                              SizedBox(height: 20.0),
                             ],
                           ),
                         ),
+
+                        SizedBox(height: 24),
+
+                        // Track Shipments Title
+                        Text(
+                          "Track your Shipments",
+                          style: AppTextStyles.heading.copyWith(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+
+                        SizedBox(height: 8),
+
+                        Text(
+                          "Enter your tracking number to get started",
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.description.copyWith(
+                            fontSize: 16,
+                            color: Colors.white.withOpacity(0.8),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // Modern Search Section
+              Transform.translate(
+                offset: Offset(0, -40),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 30,
+                        offset: Offset(0, 15),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Modern Search Field
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.form,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: AppColors.primary.withOpacity(0.2),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: searchcontroller,
+                          style: AppTextStyles.body.copyWith(
+                            fontSize: 16,
+                            color: AppColors.onSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "Enter your tracking number",
+                            hintStyle: AppTextStyles.body.copyWith(
+                              fontSize: 16,
+                              color: AppColors.onSecondary.withOpacity(0.6),
+                              fontWeight: FontWeight.w400,
+                            ),
+                            prefixIcon: Container(
+                              margin: EdgeInsets.all(12),
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.track_changes_rounded,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
+                            ),
+                            suffixIcon: Container(
+                              margin: EdgeInsets.all(8),
+                              child: Material(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(12),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(12),
+                                  onTap: () async {
+                                    final scaffoldMessenger =
+                                        ScaffoldMessenger.of(context);
+                                    String? result = await getMatchingField(
+                                      searchcontroller.text,
+                                    );
+                                    if (mounted) {
+                                      if (result != null &&
+                                          matchedAddress != null &&
+                                          matchedTrackerId != null) {
+                                        setState(() {
+                                          search = true;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          search = false;
+                                        });
+                                        scaffoldMessenger.showSnackBar(
+                                          SnackBar(
+                                            backgroundColor: AppColors.error,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            content: Text(
+                                              "Tracking number not found.",
+                                              textAlign: TextAlign.center,
+                                              style: AppTextStyles.body
+                                                  .copyWith(
+                                                    fontSize: 16,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(12),
+                                    child: Icon(
+                                      Icons.search_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 20),
+
+                      // Illustration
+                      Container(
+                        height: 180,
+                        child: Image.asset(
+                          "assets/only.png",
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Search Results or Service Cards
+              search
+                  ? Container(
+                      margin: EdgeInsets.symmetric(horizontal: 24),
+                      padding: EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 30,
+                            offset: Offset(0, 15),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          // Address Header
+                          Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.location_on_rounded,
+                                  color: AppColors.primary,
+                                  size: 24,
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    matchedAddress ?? "No address",
+                                    style: AppTextStyles.body.copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 24),
+
+                          // Timeline Section
+                          Row(
+                            children: [
+                              Container(
+                                width: 120,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  color: AppColors.form,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Image.asset(
+                                  "assets/box2.png",
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              SizedBox(width: 20),
+                              Expanded(
+                                child: FixedTimeline.tileBuilder(
+                                  builder: TimelineTileBuilder.connected(
+                                    contentsAlign: ContentsAlign.alternating,
+                                    connectionDirection:
+                                        ConnectionDirection.before,
+                                    itemCount: 4,
+                                    contentsBuilder: (context, index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 40.0,
+                                        ),
+                                        child: Text(
+                                          _getStatusText(index),
+                                          style: AppTextStyles.body.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.onSecondary,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      );
+                                    },
+                                    indicatorBuilder: (_, index) {
+                                      if (index <= (matchedTrackerId ?? -1)) {
+                                        return DotIndicator(
+                                          color: AppColors.primary,
+                                          child: Icon(
+                                            Icons.check_rounded,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        );
+                                      } else {
+                                        return OutlinedDotIndicator(
+                                          borderWidth: 2.0,
+                                          size: 20.0,
+                                          color: AppColors.onSecondary
+                                              .withOpacity(0.3),
+                                        );
+                                      }
+                                    },
+                                    connectorBuilder: (_, index, ___) =>
+                                        SolidLineConnector(
+                                          color: index < (matchedTrackerId ?? 0)
+                                              ? AppColors.primary
+                                              : AppColors.onSecondary
+                                                    .withOpacity(0.3),
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     )
                   : Column(
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 20.0, right: 20),
-                          child: Material(
-                            elevation: 3.5,
-                            borderRadius: BorderRadius.circular(30),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              padding: EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                color: AppColors.onPrimary,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(
-                                  color: AppColors.onSecondary.withAlpha(128),
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset(
-                                    "assets/car.png",
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        "Order a delivery",
-                                        style: AppTextStyles.heading.copyWith(
-                                          color: AppColors.onSecondary,
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 5.0),
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                            2.0,
-                                        child: Text(
-                                          "Order a delivery service to get your items delivered to your doorstep.",
-                                          textAlign: TextAlign.center,
-                                          style: AppTextStyles.body.copyWith(
-                                            color: AppColors.onSecondary,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                        // Modern Service Cards
+                        _buildModernServiceCard(
+                          title: "Order a delivery",
+                          description:
+                              "Order a delivery service to get your items delivered to your doorstep.",
+                          color: AppColors.primary,
+                          imagePath: "assets/car.png",
                         ),
-                        SizedBox(height: 20.0),
-                        Container(
-                          margin: EdgeInsets.only(left: 20.0, right: 20),
-                          child: Material(
-                            elevation: 3.5,
-                            borderRadius: BorderRadius.circular(30),
-                            child: Container(
-                              padding: EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                color: AppColors.onPrimary,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(
-                                  color: AppColors.onSecondary.withAlpha(128),
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset(
-                                    "assets/box2.png",
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        "Track your packages",
-                                        style: AppTextStyles.heading.copyWith(
-                                          color: AppColors.onSecondary,
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 5.0),
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                            2.0,
-                                        child: Text(
-                                          "Track your packages in real-time to know their status and location.",
-                                          textAlign: TextAlign.center,
-                                          style: AppTextStyles.body.copyWith(
-                                            color: AppColors.onSecondary,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+
+                        SizedBox(height: 20),
+
+                        _buildModernServiceCard(
+                          title: "Track your packages",
+                          description:
+                              "Track your packages in real-time to know their status and location.",
+                          color: AppColors.onePrimary,
+                          imagePath: "assets/box2.png",
                         ),
-                        SizedBox(height: 20.0),
-                        Container(
-                          margin: EdgeInsets.only(left: 20.0, right: 20),
-                          child: Material(
-                            elevation: 3.5,
-                            borderRadius: BorderRadius.circular(30),
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                left: 10.0,
-                                top: 10.0,
-                                bottom: 10.0,
-                                right: 5,
-                              ),
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                color: AppColors.onPrimary,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(
-                                  color: AppColors.onSecondary.withAlpha(128),
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset(
-                                    "assets/updatedelivery-bike.png",
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        "check delivery status",
-                                        style: AppTextStyles.heading.copyWith(
-                                          color: AppColors.onSecondary,
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 5.0),
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                            2.0,
-                                        child: Text(
-                                          "Check the status of your delivery to ensure it arrives on time and in good condition.",
-                                          textAlign: TextAlign.center,
-                                          style: AppTextStyles.body.copyWith(
-                                            color: AppColors.onSecondary,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+
+                        SizedBox(height: 20),
+
+                        _buildModernServiceCard(
+                          title: "Check delivery status",
+                          description:
+                              "Check the status of your delivery to ensure it arrives on time and in good condition.",
+                          color: AppColors.secondary,
+                          imagePath: "assets/updatedelivery-bike.png",
                         ),
                       ],
                     ),
-              SizedBox(height: 30.0),
+
+              SizedBox(height: 40),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernServiceCard({
+    required String title,
+    required String description,
+    required Color color,
+    required String imagePath,
+  }) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: AppColors.onPrimary,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Row(
+          children: [
+            // Icon and Image Container
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Stack(
+                children: [
+                  Center(
+                    child: Image.asset(
+                      imagePath,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        // color: color,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(width: 16),
+
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyles.subHeading.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.onSecondary,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    description,
+                    style: AppTextStyles.body.copyWith(
+                      fontSize: 14,
+                      color: AppColors.onSecondary,
+                      fontWeight: FontWeight.w400,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Arrow Icon
+            // Container(
+            //   padding: EdgeInsets.all(8),
+            //   decoration: BoxDecoration(
+            //     color: AppColors.form,
+            //     borderRadius: BorderRadius.circular(12),
+            //   ),
+            // ),
+          ],
         ),
       ),
     );

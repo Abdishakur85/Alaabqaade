@@ -18,119 +18,211 @@ class _AdminLoginState extends State<AdminLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: EdgeInsets.only(top: 50),
-        child: Column(
-          children: [
-            Center(
-              child: Image.asset(
-                "assets/administrator.png",
-                height: 180,
-                width: 180,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(height: 30.0),
-            Container(
-              padding: EdgeInsets.only(left: 20.0, right: 20.0),
-
-              margin: EdgeInsets.only(left: 20.0, right: 20.0),
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: AppColors.secondary,
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 20.0),
-                  Center(
-                    child: Text(
-                      "Admin Login",
-                      style: AppTextStyles.heading.copyWith(fontSize: 30.0),
-                    ),
-                  ),
-                  SizedBox(height: 50.0),
-                  Text(
-                    "Username",
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColors.surface,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.navbackground,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: TextField(
-                      controller: usernameController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter your user name",
-                        hintStyle: AppTextStyles.description.copyWith(
-                          fontSize: 20,
-                        ),
-                        prefixIcon: Icon(Icons.person_rounded),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 30.0),
-                  Text(
-                    "Password",
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColors.surface,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.navbackground,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: TextField(
-                      obscureText: true,
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter your password",
-                        hintStyle: AppTextStyles.description.copyWith(
-                          fontSize: 20,
-                        ),
-                        prefixIcon: Icon(Icons.lock_rounded),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 50.0),
-                ],
-              ),
-            ),
-            SizedBox(height: 40.0),
-            GestureDetector(
-              onTap: () {
-                loginAdmin();
-              },
-              child: Material(
-                elevation: 5.0,
-                borderRadius: BorderRadius.circular(30.0),
-                child: Container(
-                  height: 70,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.secondary, AppColors.primary],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            child: Column(
+              children: [
+                SizedBox(height: 40),
+                // Modern Admin Icon Container
+                Container(
+                  padding: EdgeInsets.all(30),
                   decoration: BoxDecoration(
-                    color: AppColors.secondary,
-                    borderRadius: BorderRadius.circular(30.0),
+                    color: AppColors.surface.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(
+                      color: AppColors.surface.withOpacity(0.3),
+                      width: 2,
+                    ),
                   ),
-                  width: MediaQuery.of(context).size.width / 1.6,
-                  child: Center(
-                    child: Text("LogIn", style: AppTextStyles.heading),
+                  child: Image.asset(
+                    "assets/administrator.png",
+                    height: 120,
+                    width: 120,
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
+                SizedBox(height: 40),
+                
+                // Modern Login Card
+                Container(
+                  padding: EdgeInsets.all(30),
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: Offset(0, 10),
+                      ),
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.1),
+                        blurRadius: 30,
+                        offset: Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Text(
+                          "Admin Login",
+                          style: AppTextStyles.heading.copyWith(
+                            fontSize: 28,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 40),
+                      // Username Field
+                      Text(
+                        "Username",
+                        style: AppTextStyles.subHeading.copyWith(
+                          color: AppColors.onSecondary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.form,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: AppColors.primary.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: usernameController,
+                          style: AppTextStyles.body.copyWith(
+                            fontSize: 16,
+                            color: AppColors.onSecondary,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Enter your username",
+                            hintStyle: AppTextStyles.body.copyWith(
+                              fontSize: 16,
+                              color: AppColors.onSecondary.withOpacity(0.6),
+                            ),
+                            prefixIcon: Icon(
+                              Icons.person_rounded,
+                              color: AppColors.primary,
+                              size: 22,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 25),
+                      
+                      // Password Field
+                      Text(
+                        "Password",
+                        style: AppTextStyles.subHeading.copyWith(
+                          color: AppColors.onSecondary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.form,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: AppColors.primary.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: TextField(
+                          obscureText: true,
+                          controller: passwordController,
+                          style: AppTextStyles.body.copyWith(
+                            fontSize: 16,
+                            color: AppColors.onSecondary,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Enter your password",
+                            hintStyle: AppTextStyles.body.copyWith(
+                              fontSize: 16,
+                              color: AppColors.onSecondary.withOpacity(0.6),
+                            ),
+                            prefixIcon: Icon(
+                              Icons.lock_rounded,
+                              color: AppColors.primary,
+                              size: 22,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 40),
+                      
+                      // Modern Login Button
+                      Container(
+                        width: double.infinity,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.primary, AppColors.secondary],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.3),
+                              blurRadius: 15,
+                              offset: Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () {
+                              loginAdmin();
+                            },
+                            child: Center(
+                              child: Text(
+                                "Login",
+                                style: AppTextStyles.button.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.onPrimary,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

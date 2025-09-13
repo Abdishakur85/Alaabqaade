@@ -43,11 +43,11 @@ class SharedPref {
 
   Future<void> setUserImage(String path) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_image', path);
+    await prefs.setString(userImageKey, path);
   }
 
   Future<String?> getUserImage() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('user_image');
+    return prefs.getString(userImageKey);
   }
 }

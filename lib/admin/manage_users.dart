@@ -31,105 +31,207 @@ class _ManageUsersState extends State<ManageUsers> {
       builder: (context, AsyncSnapshot snapshot) {
         return snapshot.hasData
             ? ListView.builder(
-                padding: EdgeInsets.zero,
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   DocumentSnapshot ds = snapshot.data.docs[index];
 
                   return Container(
-                    padding: EdgeInsets.all(5.0),
-                    margin: EdgeInsets.only(
-                      left: 20.0,
-                      right: 20.0,
-                      bottom: 20.0,
-                    ),
+                    margin: EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
-                      color: AppColors.navbackground,
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              "assets/profile.jpg",
-                              height: 90,
-                              width: 90,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.1),
+                          blurRadius: 15,
+                          offset: Offset(0, 5),
                         ),
-                        SizedBox(width: 20.0),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.person_2_rounded,
-                                  color: AppColors.onePrimary,
-                                ),
-                                SizedBox(width: 5.0),
-                                Text(
-                                  ds["Name"],
-                                  style: AppTextStyles.body.copyWith(
-                                    color: AppColors.secondary,
-                                    fontSize: 20,
-
-                                    fontWeight: FontWeight.bold,
+                      ],
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.1),
+                        width: 1,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          // Modern Avatar
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: LinearGradient(
+                                colors: [AppColors.primary.withOpacity(0.1), AppColors.secondary.withOpacity(0.1)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                height: 80,
+                                width: 80,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [AppColors.primary, AppColors.secondary],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
                                 ),
-                              ],
+                                child: Icon(
+                                  Icons.person_rounded,
+                                  size: 40,
+                                  color: AppColors.surface,
+                                ),
+                              ),
                             ),
-                            SizedBox(height: 5.0),
-                            Row(
+                          ),
+                          SizedBox(width: 20),
+                          
+                          // User Info
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.mail, color: AppColors.onePrimary),
-                                SizedBox(width: 5.0),
+                                // Name Row
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(
+                                        Icons.person_rounded,
+                                        color: AppColors.primary,
+                                        size: 16,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        ds["Name"],
+                                        style: AppTextStyles.heading.copyWith(
+                                          color: AppColors.onSecondary,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 12),
+                                
+                                // Email Row
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.secondary.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(
+                                        Icons.email_rounded,
+                                        color: AppColors.secondary,
+                                        size: 16,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        ds["Email"],
+                                        style: AppTextStyles.body.copyWith(
+                                          color: AppColors.onSecondary.withOpacity(0.8),
+                                          fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 15),
+                                
+                                // Remove Button
                                 Container(
-                                  width:
-                                      MediaQuery.of(context).size.width / 2.0,
-                                  child: Text(
-                                    ds["Email"],
-                                    style: AppTextStyles.body.copyWith(
-                                      color: AppColors.secondary,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.red.shade400, Colors.red.shade600],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.red.withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(12),
+                                      onTap: () async {
+                                        await DatabaseMethodes().deleteUser(ds.id);
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.delete_rounded,
+                                              color: Colors.white,
+                                              size: 18,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              "Remove User",
+                                              style: AppTextStyles.button.copyWith(
+                                                fontSize: 14,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 5.0),
-                            GestureDetector(
-                              onTap: () async {
-                                await DatabaseMethodes().deleteUser(ds.id);
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: AppColors.secondary,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  "Remove",
-                                  style: AppTextStyles.button.copyWith(
-                                    fontSize: 18.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
               )
-            : Container();
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.people_outline_rounded,
+                      size: 80,
+                      color: AppColors.primary.withOpacity(0.3),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      "No users found",
+                      style: AppTextStyles.heading.copyWith(
+                        fontSize: 20,
+                        color: AppColors.onSecondary.withOpacity(0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              );
       },
     );
   }
@@ -137,70 +239,105 @@ class _ManageUsersState extends State<ManageUsers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.onePrimary,
       body: Container(
-        margin: EdgeInsets.only(top: 40.0),
-        child: Column(
-          children: [
-            SizedBox(height: 30.0),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: AppColors.secondary,
-                        size: 30.0,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width / 8),
-                  Center(
-                    child: Text(
-                      "Manage Users",
-
-                      style: AppTextStyles.heading.copyWith(fontSize: 30),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                child: Column(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.primary, AppColors.secondary],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Modern Header
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: Row(
                   children: [
-                    SizedBox(height: 30.0),
-                    Expanded(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height / 1.5,
-                        child: allUsers(),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surface.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Icon(
+                              Icons.arrow_back_ios_rounded,
+                              color: AppColors.surface,
+                              size: 24,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "Manage Users",
+                          style: AppTextStyles.heading.copyWith(
+                            fontSize: 28,
+                            color: AppColors.surface,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 48), // Balance the back button
                   ],
                 ),
               ),
-            ),
-          ],
+              
+              // Content Area
+              Expanded(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(35),
+                      topRight: Radius.circular(35),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 30),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.people_rounded,
+                              color: AppColors.primary,
+                              size: 28,
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              "User Management",
+                              style: AppTextStyles.heading.copyWith(
+                                fontSize: 24,
+                                color: AppColors.onSecondary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: allUsers(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -52,12 +52,13 @@ class DatabaseMethodes {
         .update({"Tracker": updatedtracker});
   }
 
-  // get users orders(in the current)
+  // get users orders(in the current) - only active orders (not completed)
   Future<Stream<QuerySnapshot>> getUserOrder(String id) async {
     return await FirebaseFirestore.instance
         .collection("user")
         .doc(id)
         .collection("Order")
+        .where("Tracker", isLessThan: 3)
         .snapshots();
   }
 
@@ -76,6 +77,37 @@ class DatabaseMethodes {
   }
 
   Future deleteUser(String id) async {
-    return await FirebaseFirestore.instance.collection("user").doc(id).delete();
+    try {
+      // First, delete all user orders
+      var ordersSnapshot = await FirebaseFirestore.instance
+          .collection("user")
+          .doc(id)
+          .collection("Order")
+          .get();
+      
+      // Delete each order document
+      for (var orderDoc in ordersSnapshot.docs) {
+        await orderDoc.reference.delete();
+      }
+      
+      // Then delete the user document
+      return await FirebaseFirestore.instance.collection("user").doc(id).delete();
+    } catch (e) {
+      print("Error deleting user: $e");
+      rethrow;
+    }
+  }
+
+  // Update user image in database
+  Future updateUserImage(String userId, String imagePath) async {
+    try {
+      return await FirebaseFirestore.instance
+          .collection("user")
+          .doc(userId)
+          .update({"image": imagePath});
+    } catch (e) {
+      print("Error updating user image: $e");
+      rethrow;
+    }
   }
 }

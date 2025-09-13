@@ -2,6 +2,7 @@ import 'package:alaabqaade/constants/theme_data.dart';
 import 'package:alaabqaade/models/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
 class OrdersAdmin extends StatefulWidget {
   const OrdersAdmin({super.key});
@@ -18,518 +19,287 @@ class _OrdersAdminState extends State<OrdersAdmin> {
       builder: (context, AsyncSnapshot snapshot) {
         return snapshot.hasData
             ? ListView.builder(
-                padding: EdgeInsets.zero,
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   DocumentSnapshot ds = snapshot.data.docs[index];
 
                   return ds["Tracker"] == 3
                       ? Container()
-                      : Material(
-                          elevation: 3.0,
-                          borderRadius: BorderRadius.circular(30),
-
-                          child: Container(
-                            padding: EdgeInsets.all(20.0),
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
+                      : Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withOpacity(0.1),
+                                blurRadius: 15,
+                                offset: Offset(0, 5),
+                              ),
+                            ],
+                            border: Border.all(
+                              color: AppColors.primary.withOpacity(0.1),
+                              width: 1,
                             ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: 20.0),
-                                Center(
-                                  child: Image.asset(
-                                    "assets/box2.png",
-                                    width: 200,
-                                    height: 200,
-                                    fit: BoxFit.cover,
-                                  ),
+                                // Package Icon Header
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            AppColors.primary.withOpacity(0.1),
+                                            AppColors.secondary.withOpacity(
+                                              0.1,
+                                            ),
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Image.asset(
+                                        "assets/box2.png",
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    SizedBox(width: 16),
+                                    Expanded(
+                                      child: Text(
+                                        "Order #${ds.id.substring(0, 8)}",
+                                        style: AppTextStyles.heading.copyWith(
+                                          fontSize: 18,
+                                          color: AppColors.onSecondary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(height: 20.0),
-                                Text(
-                                  "Drope-Off Information",
-                                  style: AppTextStyles.heading.copyWith(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Text(
-                                  "Address:  " + ds["DropeOffAddress"],
-                                  style: AppTextStyles.body.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "Name:  " + ds["DropeOffUsername"],
-                                  style: AppTextStyles.body.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "Phone:  " + ds["DropeOffNumber"],
-                                  style: AppTextStyles.body.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 20.0),
-                                Text(
-                                  "Pickup Infomation",
-                                  style: AppTextStyles.heading.copyWith(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Text(
-                                  "Address:  " + ds["PickUpaddress"],
-                                  style: AppTextStyles.body.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "Name:  " + ds["PickUpUsername"],
+                                SizedBox(height: 20),
 
-                                  style: AppTextStyles.body.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                // Drop-off Information
+                                _buildInfoSection(
+                                  title: "Drop-off Information",
+                                  icon: Icons.location_on_rounded,
+                                  iconColor: Colors.red,
+                                  address: ds["DropeOffAddress"],
+                                  name: ds["DropeOffUsername"],
+                                  phone: ds["DropeOffNumber"],
                                 ),
-                                Text(
-                                  "Phone:  " + ds["pickUpNumber"],
-                                  style: AppTextStyles.body.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+
+                                SizedBox(height: 16),
+
+                                // Pickup Information
+                                _buildInfoSection(
+                                  title: "Pickup Information",
+                                  icon: Icons.my_location_rounded,
+                                  iconColor: Colors.blue,
+                                  address: ds["PickUpaddress"],
+                                  name: ds["PickUpUsername"],
+                                  phone: ds["pickUpNumber"],
                                 ),
-                                SizedBox(height: 20.0),
-                                ds["Tracker"] >= 0
-                                    ? Material(
-                                        elevation: 3.0,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          padding: EdgeInsets.only(
-                                            top: 10.0,
-                                            bottom: 10.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.onePrimary,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      AppColors.navbackground,
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                child: Icon(
-                                                  Icons.done,
-                                                  color: AppColors.onePrimary,
-                                                ),
-                                              ),
-                                              SizedBox(width: 5.0),
-                                              Container(
-                                                padding: EdgeInsets.all(10.0),
-                                                width:
-                                                    MediaQuery.of(
-                                                      context,
-                                                    ).size.width /
-                                                    1.5,
-                                                child: Text(
-                                                  "Order Placed",
-                                                  textAlign: TextAlign.center,
-                                                  style: AppTextStyles.body
-                                                      .copyWith(
-                                                        color: Colors.white,
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : GestureDetector(
-                                        onTap: () async {
-                                          if (ds["Tracker"] == -1) {
-                                            int updatedtracker = ds["Tracker"];
-                                            updatedtracker = updatedtracker + 1;
-                                            await DatabaseMethodes()
-                                                .updateAdminTracker(
-                                                  ds.id,
-                                                  updatedtracker,
-                                                );
-                                            await DatabaseMethodes()
-                                                .updateUserTracker(
-                                                  ds["UserId"],
-                                                  updatedtracker,
-                                                  ds["OrderId"],
-                                                );
-                                          }
-                                        },
-                                        child: Center(
-                                          child: Container(
-                                            width:
-                                                MediaQuery.of(
-                                                  context,
-                                                ).size.width /
-                                                1.5,
-                                            padding: EdgeInsets.all(20.0),
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: Colors.black,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Text(
-                                              "Order Placed",
-                                              textAlign: TextAlign.center,
-                                              style: AppTextStyles.body
-                                                  .copyWith(
-                                                    color: Colors.white,
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                SizedBox(height: 20.0),
-                                ds["Tracker"] >= 1
-                                    ? Material(
-                                        elevation: 3.0,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          padding: EdgeInsets.only(
-                                            top: 10.0,
-                                            bottom: 10.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.onePrimary,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      AppColors.navbackground,
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                child: Icon(
-                                                  Icons.done,
-                                                  color: AppColors.onePrimary,
-                                                ),
-                                              ),
-                                              SizedBox(width: 5.0),
-                                              Container(
-                                                padding: EdgeInsets.all(10.0),
-                                                width:
-                                                    MediaQuery.of(
-                                                      context,
-                                                    ).size.width /
-                                                    1.5,
-                                                child: Text(
-                                                  "Preparing Order",
-                                                  textAlign: TextAlign.center,
-                                                  style: AppTextStyles.body
-                                                      .copyWith(
-                                                        color: Colors.white,
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : GestureDetector(
-                                        onTap: () async {
-                                          if (ds["Tracker"] == 0) {
-                                            int updatedtracker = ds["Tracker"];
-                                            updatedtracker = updatedtracker + 1;
-                                            // Update the tracker in the admin orders
-                                            await DatabaseMethodes()
-                                                .updateAdminTracker(
-                                                  ds.id,
-                                                  updatedtracker,
-                                                );
-                                            // Update the tracker in the user orders
-                                            await DatabaseMethodes()
-                                                .updateUserTracker(
-                                                  ds["UserId"],
-                                                  updatedtracker,
-                                                  ds["OrderId"],
-                                                );
-                                          }
-                                        },
-                                        child: Center(
-                                          child: Container(
-                                            width:
-                                                MediaQuery.of(
-                                                  context,
-                                                ).size.width /
-                                                1.5,
-                                            padding: EdgeInsets.all(20.0),
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: Colors.black,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Text(
-                                              "Preparing Order",
-                                              textAlign: TextAlign.center,
-                                              style: AppTextStyles.body
-                                                  .copyWith(
-                                                    color: Colors.white,
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
 
-                                SizedBox(height: 20.0),
-                                ds["Tracker"] >= 2
-                                    ? Material(
-                                        elevation: 3.0,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          padding: EdgeInsets.only(
-                                            top: 10.0,
-                                            bottom: 10.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.onePrimary,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      AppColors.navbackground,
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                child: Icon(
-                                                  Icons.done,
-                                                  color: AppColors.onePrimary,
-                                                ),
-                                              ),
-                                              SizedBox(width: 5.0),
-                                              Container(
-                                                padding: EdgeInsets.all(10.0),
-                                                width:
-                                                    MediaQuery.of(
-                                                      context,
-                                                    ).size.width /
-                                                    1.5,
-                                                child: Text(
-                                                  "On the way to Drope-Off",
-                                                  textAlign: TextAlign.center,
-                                                  style: AppTextStyles.body
-                                                      .copyWith(
-                                                        color: Colors.white,
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : GestureDetector(
-                                        onTap: () async {
-                                          if (ds["Tracker"] == 1) {
-                                            int updatedtracker = ds["Tracker"];
-                                            updatedtracker = updatedtracker + 1;
-                                            // Update the tracker in the admin orders
-                                            await DatabaseMethodes()
-                                                .updateAdminTracker(
-                                                  ds.id,
-                                                  updatedtracker,
-                                                );
-                                            // Update the tracker in the user orders
-                                            await DatabaseMethodes()
-                                                .updateUserTracker(
-                                                  ds["UserId"],
-                                                  updatedtracker,
-                                                  ds["OrderId"],
-                                                );
-                                          }
-                                        },
-                                        child: Center(
-                                          child: Container(
-                                            width:
-                                                MediaQuery.of(
-                                                  context,
-                                                ).size.width /
-                                                1.5,
-                                            padding: EdgeInsets.all(16.0),
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: Colors.black,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Text(
-                                              "On the way to Drope-Off",
-                                              textAlign: TextAlign.center,
-                                              style: AppTextStyles.body
-                                                  .copyWith(
-                                                    color: Colors.white,
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                SizedBox(height: 20.0),
-                                SizedBox(height: 20.0),
-                                ds["Tracker"] >= 3
-                                    ? Material(
-                                        elevation: 3.0,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          padding: EdgeInsets.only(
-                                            top: 10.0,
-                                            bottom: 10.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.onePrimary,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      AppColors.navbackground,
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                child: Icon(
-                                                  Icons.done,
-                                                  color: AppColors.onePrimary,
-                                                ),
-                                              ),
-                                              SizedBox(width: 5.0),
-                                              Container(
-                                                padding: EdgeInsets.all(10.0),
-                                                width:
-                                                    MediaQuery.of(
-                                                      context,
-                                                    ).size.width /
-                                                    1.5,
-                                                child: Text(
-                                                  "On the way to Drope-Off",
-                                                  textAlign: TextAlign.center,
-                                                  style: AppTextStyles.body
-                                                      .copyWith(
-                                                        color: Colors.white,
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : GestureDetector(
-                                        onTap: () async {
-                                          if (ds["Tracker"] == 2) {
-                                            int updatedtracker = ds["Tracker"];
-                                            updatedtracker = updatedtracker + 1;
-                                            // Update the tracker in the admin orders
-                                            await DatabaseMethodes()
-                                                .updateAdminTracker(
-                                                  ds.id,
-                                                  updatedtracker,
-                                                );
-                                            // Update the tracker in the user orders
-                                            await DatabaseMethodes()
-                                                .updateUserTracker(
-                                                  ds["UserId"],
-                                                  updatedtracker,
-                                                  ds["OrderId"],
-                                                );
-                                          }
-                                        },
-                                        child: Center(
-                                          child: Container(
-                                            width:
-                                                MediaQuery.of(
-                                                  context,
-                                                ).size.width /
-                                                1.5,
-                                            padding: EdgeInsets.all(20.0),
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: Colors.black,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Text(
-                                              " Parcel delivered",
-                                              textAlign: TextAlign.center,
-                                              style: AppTextStyles.body
-                                                  .copyWith(
-                                                    color: Colors.white,
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                SizedBox(height: 20),
 
-                                SizedBox(height: 20.0),
+                                // Status Tracking
+                                _buildStatusSection(ds),
                               ],
                             ),
                           ),
                         );
                 },
               )
-            : Container();
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.inventory_2_outlined,
+                      size: 80,
+                      color: AppColors.primary.withOpacity(0.3),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      "No orders found",
+                      style: AppTextStyles.heading.copyWith(
+                        fontSize: 20,
+                        color: AppColors.onSecondary.withOpacity(0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              );
       },
+    );
+  }
+
+  Widget _buildInfoSection({
+    required String title,
+    required IconData icon,
+    required Color iconColor,
+    required String address,
+    required String name,
+    required String phone,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: AppTextStyles.heading.copyWith(
+            fontSize: 16,
+            color: AppColors.onSecondary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 8),
+        Row(
+          children: [
+            Icon(icon, color: iconColor, size: 20),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                address,
+                style: AppTextStyles.body.copyWith(
+                  fontSize: 16,
+                  color: AppColors.onSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 4),
+        Row(
+          children: [
+            Icon(Icons.person_rounded, color: iconColor, size: 20),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                name,
+                style: AppTextStyles.body.copyWith(
+                  fontSize: 16,
+                  color: AppColors.onSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 4),
+        Row(
+          children: [
+            Icon(Icons.phone_rounded, color: iconColor, size: 20),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                phone,
+                style: AppTextStyles.body.copyWith(
+                  fontSize: 16,
+                  color: AppColors.onSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusSection(DocumentSnapshot ds) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                "Order Status",
+                style: AppTextStyles.heading.copyWith(
+                  fontSize: 16,
+                  color: AppColors.onSecondary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Text(
+              ds["Tracker"] >= 0 ? "In Progress" : "Not Started",
+              style: AppTextStyles.body.copyWith(
+                fontSize: 16,
+                color: AppColors.onSecondary,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: LinearProgressIndicator(
+                value: ds["Tracker"] / 3,
+                backgroundColor: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary,
+              ),
+            ),
+            SizedBox(width: 16),
+            Text(
+              "${(ds["Tracker"] / 3 * 100).round()}%",
+              style: AppTextStyles.body.copyWith(
+                fontSize: 16,
+                color: AppColors.onSecondary,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () async {
+                  if (ds["Tracker"] < 3) {
+                    int updatedTracker = ds["Tracker"];
+                    updatedTracker++;
+                    await DatabaseMethodes().updateAdminTracker(
+                      ds.id,
+                      updatedTracker,
+                    );
+                    await DatabaseMethodes().updateUserTracker(
+                      ds["UserId"],
+                      updatedTracker,
+                      ds["OrderId"],
+                    );
+                  }
+                },
+                child: Text(
+                  "Update Status",
+                  style: AppTextStyles.body.copyWith(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -547,63 +317,104 @@ class _OrdersAdminState extends State<OrdersAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.secondary,
       body: Container(
-        margin: EdgeInsets.only(top: 50),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.primary, AppColors.secondary],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Modern Header
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: Row(
+                  children: [
+                    Container(
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(30),
+                        color: AppColors.surface.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: AppColors.secondary,
-                        size: 30.0,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () => Navigator.pop(context),
+                          child: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Icon(
+                              Icons.arrow_back_ios_rounded,
+                              color: AppColors.surface,
+                              size: 24,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width / 8),
-                  Center(
-                    child: Text(
-                      "Manage Orders",
-
-                      style: AppTextStyles.heading.copyWith(fontSize: 30),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "Manage Orders",
+                          style: AppTextStyles.heading.copyWith(
+                            fontSize: 28,
+                            color: AppColors.surface,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 48), // Balance the back button
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
+
+              // Content Area
+              Expanded(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(35),
+                      topRight: Radius.circular(35),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 25,
+                          vertical: 30,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.inventory_2_rounded,
+                              color: AppColors.primary,
+                              size: 28,
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              "Order Management",
+                              style: AppTextStyles.heading.copyWith(
+                                fontSize: 24,
+                                color: AppColors.onSecondary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(child: allOrder()),
+                    ],
                   ),
                 ),
-                // child: SingleChildScrollView(
-                //   child: Column(children: [SizedBox(height: 20.0), allOrder()]),
-                // ),
-                child: Container(height: 500, child: allOrder()),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

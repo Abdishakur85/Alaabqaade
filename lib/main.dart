@@ -14,7 +14,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:alaabqaade/constants/theme_data.dart';
 
-// import 'package:alaabqaade/home.dart';
+import 'package:alaabqaade/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,14 +30,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: AppColors.surface),
       debugShowCheckedModeBanner: false,
-
-      //  home: onboarding ? OnboardingView() : PostView(),
-      // home: BottomNav(),
-      // home: OrdersAdmin(),
-      // home: OnboardingView(),
       // home: LogIn(),
-      // home: Profile(),
-      home: HomeAdmin(),
+      home: OnboardingView(),
+      // home: AdminLogin(),
     );
   }
 }
