@@ -428,122 +428,122 @@ class _HomeState extends State<Home> {
               search
                   ? Container(
                       margin: EdgeInsets.symmetric(horizontal: 24),
-                      padding: EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 30,
-                            offset: Offset(0, 15),
-                          ),
-                        ],
-                      ),
                       child: Column(
                         children: [
-                          // Address Header
+                          // Modern Tracking Card with Glassmorphism
                           Container(
-                            padding: EdgeInsets.all(16),
+                            width: double.infinity,
+                            padding: EdgeInsets.all(24),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.location_on_rounded,
-                                  color: AppColors.primary,
-                                  size: 24,
+                              color: Colors.white.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 30,
+                                  offset: Offset(0, 15),
                                 ),
-                                SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    matchedAddress ?? "No address",
-                                    style: AppTextStyles.body.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.primary,
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.8),
+                                  blurRadius: 10,
+                                  offset: Offset(0, -5),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                // Header with delivery truck icon and address
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary.withOpacity(
+                                          0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Icon(
+                                        Icons.local_shipping_rounded,
+                                        color: AppColors.primary,
+                                        size: 24,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.center,
+                                    SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Delivery Address",
+                                            style: AppTextStyles.body.copyWith(
+                                              fontSize: 14,
+                                              color: AppColors.onSecondary
+                                                  .withOpacity(0.7),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            matchedAddress ?? "No address",
+                                            style: AppTextStyles.subHeading
+                                                .copyWith(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.onSecondary,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _getStatusColor(
+                                          matchedTrackerId ?? 0,
+                                        ).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        _getStatusLabel(matchedTrackerId ?? 0),
+                                        style: AppTextStyles.body.copyWith(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: _getStatusColor(
+                                            matchedTrackerId ?? 0,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                SizedBox(height: 24),
+
+                                // Centered Package Image
+                                Container(
+                                  width: 200,
+                                  height: 200,
+                                  padding: EdgeInsets.all(30),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.form,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Image.asset(
+                                    "assets/box2.png",
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-
-                          SizedBox(height: 24),
-
-                          // Timeline Section
-                          Row(
-                            children: [
-                              Container(
-                                width: 120,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  color: AppColors.form,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Image.asset(
-                                  "assets/box2.png",
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              SizedBox(width: 20),
-                              Expanded(
-                                child: FixedTimeline.tileBuilder(
-                                  builder: TimelineTileBuilder.connected(
-                                    contentsAlign: ContentsAlign.alternating,
-                                    connectionDirection:
-                                        ConnectionDirection.before,
-                                    itemCount: 4,
-                                    contentsBuilder: (context, index) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 40.0,
-                                        ),
-                                        child: Text(
-                                          _getStatusText(index),
-                                          style: AppTextStyles.body.copyWith(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.onSecondary,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      );
-                                    },
-                                    indicatorBuilder: (_, index) {
-                                      if (index <= (matchedTrackerId ?? -1)) {
-                                        return DotIndicator(
-                                          color: AppColors.primary,
-                                          child: Icon(
-                                            Icons.check_rounded,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        );
-                                      } else {
-                                        return OutlinedDotIndicator(
-                                          borderWidth: 2.0,
-                                          size: 20.0,
-                                          color: AppColors.onSecondary
-                                              .withOpacity(0.3),
-                                        );
-                                      }
-                                    },
-                                    connectorBuilder: (_, index, ___) =>
-                                        SolidLineConnector(
-                                          color: index < (matchedTrackerId ?? 0)
-                                              ? AppColors.primary
-                                              : AppColors.onSecondary
-                                                    .withOpacity(0.3),
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ],
                           ),
                         ],
                       ),
@@ -689,18 +689,62 @@ class _HomeState extends State<Home> {
     );
   }
 
-  String _getStatusText(int index) {
+  Color _getStatusColor(int index) {
     switch (index) {
       case 0:
-        return "Order Placed ";
+        return AppColors.primary;
+      case 1:
+        return AppColors.onePrimary;
+      case 2:
+        return AppColors.secondary;
+      case 3:
+        return AppColors.primary;
+      default:
+        return AppColors.onSecondary;
+    }
+  }
+
+  String _getStatusLabel(int index) {
+    switch (index) {
+      case 0:
+        return "Order Placed";
       case 1:
         return "Preparing Order";
       case 2:
-        return "On the way to drop-off";
+        return "On the way";
       case 3:
-        return " Parcel delivered";
+        return "Delivered";
       default:
         return "";
     }
+  }
+
+  Widget _buildStatusBox(String text, int index, int trackerId) {
+    bool isActive = index <= trackerId;
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(
+        color: isActive 
+            ? AppColors.primary.withOpacity(0.1)
+            : Colors.grey[100],
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isActive
+              ? AppColors.primary
+              : Colors.grey.withOpacity(0.3),
+          width: 1.5,
+        ),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: AppTextStyles.body.copyWith(
+          fontSize: 14,
+          fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+          color: isActive ? AppColors.primary : Colors.grey[600],
+        ),
+      ),
+    );
   }
 }
