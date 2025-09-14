@@ -162,6 +162,7 @@ class SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [AppColors.primary, AppColors.secondary],
@@ -477,43 +478,36 @@ class SignUpState extends State<SignUp> {
 
                         // Login Link
                         Center(
-                          child: Flexible(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    "Already have an account? ",
-                                    style: AppTextStyles.body.copyWith(
-                                      color: AppColors.onSecondary.withOpacity(0.7),
-                                      fontSize: 16,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Already have an account? ",
+                                style: AppTextStyles.body.copyWith(
+                                  fontSize: 16,
+                                  color: AppColors.onSecondary,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LogIn(),
                                     ),
-                                    overflow: TextOverflow.ellipsis,
+                                  );
+                                },
+                                child: Text(
+                                  "Login",
+                                  style: AppTextStyles.body.copyWith(
+                                    fontSize: 16,
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => LogIn(),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    "Sign In",
-                                    style: AppTextStyles.body.copyWith(
-                                      color: AppColors.primary,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: AppColors.primary,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
